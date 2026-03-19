@@ -1,6 +1,6 @@
 # j47patel_sidequest_w9
 Side Quest Week 9
-GBDA302 Week 9 Example 3: Debig Menu
+GBDA302 Week 9 Example 3: Debug Menu
 ---
 
 ## Authors
