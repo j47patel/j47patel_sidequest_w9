@@ -23,6 +23,7 @@ let beastMode = false;
 let player;
 let playerImg, bgImg;
 let jumpSfx, musicSfx;
+let beastMusicSfx;
 let musicStarted = false;
 
 let playerAnis = {
@@ -81,6 +82,7 @@ function preload() {
   if (typeof loadSound === "function") {
     jumpSfx = loadSound("assets/sfx/jump.wav");
     musicSfx = loadSound("assets/sfx/music.wav");
+    beastMusicSfx = loadSound("assets/sfx/beastMusic.mp3");
   }
 }
 
@@ -186,6 +188,15 @@ function draw() {
     player.tint = color(255, 100, 100); // reddish tint
   } else {
     player.tint = color(255); // normal
+  }
+
+  // --- MUSIC SWITCH FOR BEAST MODE ---
+  if (beastMode) {
+    if (musicSfx.isPlaying()) musicSfx.stop();
+    if (beastMusicSfx && !beastMusicSfx.isPlaying()) beastMusicSfx.play();
+  } else {
+    if (beastMusicSfx && beastMusicSfx.isPlaying()) beastMusicSfx.stop();
+    if (musicSfx && !musicSfx.isPlaying()) musicSfx.play();
   }
 
   // --- BACKGROUND ---
