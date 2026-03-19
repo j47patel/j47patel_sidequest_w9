@@ -15,6 +15,11 @@
       = empty (no sprite)
 */
 
+let moonGravity = false;
+const MOON_GRAVITY = 5; // lower than normal gravity
+
+let beastMode = false;
+
 let player;
 let playerImg, bgImg;
 let jumpSfx, musicSfx;
@@ -154,6 +159,16 @@ function startMusicIfNeeded() {
 
 function keyPressed() {
   startMusicIfNeeded();
+
+  // Press "G" to toggle gravity
+  if (key === "g" || key === "G") {
+    moonGravity = !moonGravity;
+  }
+
+  // Beast mode toggle
+  if (key === "b" || key === "B") {
+    beastMode = !beastMode;
+  }
 }
 
 function mousePressed() {
@@ -166,11 +181,25 @@ function touchStarted() {
 }
 
 function draw() {
+  // --- BEAST MODE VISUAL ---
+  if (beastMode) {
+    player.tint = color(255, 100, 100); // reddish tint
+  } else {
+    player.tint = color(255); // normal
+  }
+
   // --- BACKGROUND ---
   camera.off();
   imageMode(CORNER);
   image(bgImg, 0, 0, bgImg.width, bgImg.height);
   camera.on();
+
+  // --- DEBUG: GRAVITY TOGGLE ---
+  if (moonGravity) {
+    world.gravity.y = MOON_GRAVITY;
+  } else {
+    world.gravity.y = GRAVITY;
+  }
 
   // --- PLAYER CONTROLS ---
   // first check to see if the player is on the ground
@@ -210,15 +239,47 @@ function draw() {
   // --- MOVEMENT ---
   if (!attacking) {
     player.vel.x = 0;
+
+    let speed = beastMode ? 3 : 1.5; // double speed in beast mode
+
     if (kb.pressing("left")) {
-      player.vel.x = -1.5;
+      player.vel.x = -speed;
       player.mirror.x = true;
     } else if (kb.pressing("right")) {
-      player.vel.x = 1.5;
+      player.vel.x = speed;
       player.mirror.x = false;
     }
   }
 
   // --- KEEP IN VIEW ---
   player.pos.x = constrain(player.pos.x, FRAME_W / 2, VIEWW - FRAME_W / 2);
+
+  // --- BEAST MODE SCREEN TINT ---
+  if (beastMode) {
+    camera.off(); // make sure it overlays the whole screen
+
+    noStroke();
+    fill(255, 0, 0, 60); // red with transparency (last value = opacity)
+    rect(0, 0, width, height);
+
+    camera.on();
+  }
+
+  // --- DEBUG SCREEN ---
+  camera.off();
+
+  fill(0, 150);
+  noStroke();
+  rect(10, 10, 180, 70);
+
+  fill(255);
+  textSize(12);
+  textAlign(LEFT, TOP);
+
+  text("DEBUG MENU", 20, 15);
+  text("Gravity: " + (moonGravity ? "MOON 🌙" : "EARTH 🌍"), 20, 30);
+  text("Beast Mode: " + (beastMode ? "ON 🔥" : "OFF"), 20, 45);
+  text("G = Gravity | B = Beast", 20, 60);
+
+  camera.on();
 }
